@@ -1,0 +1,36 @@
+{% extends  "index/web_mdl.html" %}
+
+{% block content %}
+    <div class="container">
+    <h1>ajax功能演示</h1>
+        <input type="button" id="button-one" class="btn-successs" value="点我">
+
+
+
+
+    </div>
+
+
+{% endblock %}
+{% block js %}
+    <script>
+    $(function (){
+
+    })
+    function bindBunOne(){
+        $("#button-one").click(function (){
+            $.ajax({
+                //请求的地址
+                url:"/ajax/",
+                type:"past",
+
+
+            })
+
+        })
+    }
+
+
+
+    </script>
+{% endblock %}

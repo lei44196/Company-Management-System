@@ -1,0 +1,39 @@
+{% extends "index/web_mdl.html" %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/layui.css' %}">
+{% endblock %}
+{% block content %}
+
+    <div class="container">
+        <h1>{{ title }}</h1>
+        <form method="post" novalidate>
+        {% csrf_token %}
+            {% for filed in form %}
+                <label for="exampleInputEmail1">{{ filed.label }}</label>
+
+                {{ filed }}
+                <span style="color: red">{{ filed.errors }}</span>
+            	
+            {% endfor %}
+             <button type="submit" class="btn-success">提交</button>
+        </form>
+    
+
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="{% static 'js/layui.js' %}"></script>
+    <script>
+        layui.use(function () {
+            var laydate = layui.laydate;
+            // 渲染
+            laydate.render({
+                elem: '#id_create_time'
+            });
+        });
+    </script>
+{% endblock %}

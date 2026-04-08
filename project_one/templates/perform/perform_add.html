@@ -1,0 +1,39 @@
+{% extends "index/web_mdl.html" %}
+
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/layui.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ title }}</h1>
+        <form method="post" novalidate enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for filed in form %}
+                {% if filed.name == 'times' %}
+                    <label for="id_times">{{ filed.label }}</label>
+                    <input type="text" name="times" class="form-control" value="{{ current_date }}" disabled>
+                    <span style="color: red">{{ filed.errors }}</span>
+                {% elif filed.name == 'image' %}
+                    <label for="id_image">业绩图片</label>
+                    <input type="file" name="image" class="form-control" required>
+                    <span style="color: red">{{ filed.errors }}</span>
+                {% else %}
+                    <label for="exampleInputEmail1">{{ filed.label }}</label>
+                    {{ filed }}
+                    <span style="color: red">{{ filed.errors }}</span>
+                {% endif %}
+            {% endfor %}
+            <button type="submit" class="btn-success">提交</button>
+        </form>
+
+
+    </div>
+
+{% block js %}
+    <script src="{% static 'js/layui.js' %}"></script>
+{% endblock %}
+
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "index/web_mdl.html" %}
+\
+{% block content %}
+	<div class="container">
+    <a href="/user/add/" class="btn btn-success">添加员工</a>
+    <a href="/user/add/modelform/" class="btn btn-warning">添加员工2</a>
+    <form method="get">
+        <div class="form-group" style="float: right">
+            <input type="text" class="form-control" name="search" placeholder="Search"
+                   value="{{ search_value }}">
+            <button class="btn btn-default" type="submit">查询</button>
+        </div>
+    </form>
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">员工表</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+
+                    <thead>
+                    <tr>
+
+                        <th>姓名</th>
+                        <th>年龄</th>
+                        <th>性别</th>
+                        <th>薪水</th>
+                        <th>入职时间</th>
+                        <th>部门</th>
+                        <th>操作</th>
+
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for data in data_list %}
+                        <tr>
+                            <th>{{ data.name }}</th>
+                            <td>{{ data.age }}</td>
+                            <td>{{ data.get_gender_display  }}</td>
+                            <td>{{ data.salary }}</td>
+                            <td>{{ data.create_time|date:"Y-m-d" }}</td>
+                            <td>{{ data.depart.title }}</td>
+                            <td style="color: green">
+                                <a href="/user/{{ data.id }}/del/">删除</a>
+                                <a href="/user/{{ data.id }}/modify/">修改</a>
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if page_html %}
+            <ul class="pagination">
+                {{ page_html|safe }}
+            </ul>
+        {% endif %}
+
+    </div>
+{% endblock %}

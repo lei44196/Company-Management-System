@@ -1,0 +1,99 @@
+{% extends "index/web_mdl.html" %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/layui.css' %}">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.27/esri/themes/light/main.css">
+    <style>
+        #map {
+            height: 300px;
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>添加任务</h1>
+        
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">任务标题 *</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="description">任务描述 *</label>
+                <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="assignee">接收员工 *</label>
+                <select class="form-control" id="assignee" name="assignee" required>
+                    <option value="">请选择员工</option>
+                    {% for employee in employees %}
+                        <option value="{{ employee.id }}">{{ employee.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="deadline">截止日期 *</label>
+                <input type="text" class="form-control" id="deadline" name="deadline" required>
+            </div>
+            
+            <!-- ArcGIS地图 -->
+            <div id="map"></div>
+            
+            <button type="submit" class="btn-success">提交</button>
+            <a href="/task/" class="btn btn-secondary">取消</a>
+        </form>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/layui.js' %}"></script>
+    <script>
+        layui.use(function () {
+            var laydate = layui.laydate;
+            // 渲染日期选择器
+            laydate.render({
+                elem: '#deadline'
+            });
+        });
+    </script>
+    
+    <!-- 引入ArcGIS JavaScript API -->
+    <script src="https://js.arcgis.com/4.27/" defer></script>
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/widgets/Search"
+        ], function(Map, MapView, Search) {
+            // 创建地图
+            const map = new Map({
+                basemap: "streets-navigation-vector"
+            });
+            
+            // 创建地图视图
+            const view = new MapView({
+                container: "map",
+                map: map,
+                center: [116.3974, 39.9093], // 北京坐标
+                zoom: 12
+            });
+            
+            // 添加搜索控件
+            const searchWidget = new Search({
+                view: view
+            });
+            view.ui.add(searchWidget, { position: "top-right" });
+        });
+    </script>
+{% endblock %}

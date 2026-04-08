@@ -1,0 +1,58 @@
+{% extends "index/web_mdl.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <a href="/admin_role/admin_add/" class="btn btn-success">添加账号</a>
+
+
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">用户表</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>用户名</th>
+                        <th>密码</th>
+                        <th>身份</th>
+                        <th>重置密码</th>
+
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for data in data_list %}
+                        <tr>
+                            <th scope="row">{{ data.id }}</th>
+                            <td>{{ data.username }}</td>
+                            <td>********</td>
+                            <td>{{ data.get_role_display}}</td>
+                            <td><a href="/admin_role/{{ data.id }}/reset/">重置密码</a></td>
+
+
+                            <td style="color: green">
+                                <a href="">删除</a>
+                                <a href="/admin_role/{{ data.id }}/admin_modify/">修改</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">暂无数据</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if page_html %}
+            <ul class="pagination">
+                {{ page_html|safe }}
+            </ul>
+        {% endif %}
+
+    </div>
+{% endblock %}

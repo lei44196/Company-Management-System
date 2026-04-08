@@ -1,0 +1,65 @@
+{% extends "index/web_mdl.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <a href="/asset/add/" class="btn btn-success">添加资产</a>
+        <a href="/asset/daoru/" class="btn btn-warning">导入资产</a>
+
+        <form method="get">
+            <div class="form-group" style="float: right">
+                <input type="text" class="form-control" name="search" placeholder="Search"
+                       value="{{ search_value }}">
+                <button class="btn btn-default" type="submit">查询</button>
+            </div>
+        </form>
+
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">资产表</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>电话号码</th>
+                        <th>使用状态</th>
+                        <th>购买时间</th>
+                        <th>价格</th>
+                        <th>使用人</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for data in data_list %}
+                        <tr>
+                            <th scope="row">{{ data.id }}</th>
+                            <td>{{ data.mobile }}</td>
+                            <td>{{ data.get_status_display }}</td>
+                            <td>{{ data.times }}</td>
+                            <td>{{ data.price }}</td>
+                            <td>{{ data.user.name|default:"未分配" }}</td>
+                            <td style="color: green">
+                                <a href="/asset/{{ data.id }}/del">删除</a>
+                                <a href="/asset/{{ data.id }}/modify">修改</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">暂无数据</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if page_html %}
+            <ul class="pagination">
+                {{ page_html|safe }}
+            </ul>
+        {% endif %}
+
+    </div>
+{% endblock %}

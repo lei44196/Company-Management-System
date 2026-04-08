@@ -1,0 +1,71 @@
+{% extends "index/web_mdl.html" %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/layui.css' %}">
+{% endblock %}
+{% block content %}
+
+    <div class="container">
+        <h1>{{ title }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="exampleInputEmail1">姓名</label>
+                <input type="text" name="name" class="form-control" placeholder=请输入姓名>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">年龄</label>
+                <input type="text" name="age" class="form-control" placeholder=请输入年龄>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">性别</label>
+                <select name="gender" class="form-control">
+                    {% for item in gender_choice %}
+                        <option value="{{ item.0 }}">{{ item.1 }}</option>
+
+                    {% endfor %}
+
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">收入</label>
+                <input type="text" name="salary" class="form-control" placeholder=请输入收入>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">入职时间</label>
+                <input type="text" name="dtime" id="d_time" class="form-control" placeholder=请输入入职时间>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputEmail1">部门</label>
+                <select name="depart" class="form-control">
+                    {% for item in depart_list %}
+                        <option value="{{ item.id }}">{{ item.title }}</option>
+
+                    {% endfor %}
+
+
+                </select>
+            </div>
+        <button type="submit" class="btn-success">提交</button>
+
+
+        </form>
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="{% static 'js/layui.js' %}"></script>
+    <script>
+        layui.use(function () {
+            var laydate = layui.laydate;
+            // 渲染
+            laydate.render({
+                elem: '#d_time'
+            });
+        });
+    </script>
+{% endblock %}
