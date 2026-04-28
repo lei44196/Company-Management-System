@@ -44,39 +44,39 @@
     <div class="login-container">
         <h2 class="login-title">用户登录</h2>
 
-        {% if form.non_field_errors %}
+        {% if form.non_field_errors %}<!-- 检查表单是否有非字段错误，如验证码错误或其他全局错误 -->
             <div class="alert alert-danger" role="alert">
-                {{ form.non_field_errors.0 }}
+                {{ form.non_field_errors.0 }}<!-- 显示第一个非字段错误信息 -->
             </div>
         {% endif %}
 
         <form method="post">
-            {% csrf_token %}
+            {% csrf_token %}<!-- 生成CSRF令牌，防止跨站请求伪造攻击 -->
             <div class="form-group mb-3">
-                <label for="{{ form.username.id_for_label }}" class="form-label">用户名</label>
-                {{ form.username }}
-                {% if form.username.errors %}
-                    <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+                <label for="{{ form.username.id_for_label }}" class="form-label">用户名</label><!-- form.username.id_for_label获取用户名字段的id属性值 -->
+                {{ form.username }}<!-- 渲染用户名输入框，由后端LoginForm类定义 -->
+                {% if form.username.errors %}<!-- 检查用户名字段是否有错误 -->
+                    <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div><!-- 显示第一个用户名错误信息 -->
                 {% endif %}
             </div>
             <div class="form-group mb-3">
-                <label for="{{ form.password.id_for_label }}" class="form-label">密码</label>
-                {{ form.password }}
-                {% if form.password.errors %}
-                    <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+                <label for="{{ form.password.id_for_label }}" class="form-label">密码</label><!-- form.password.id_for_label获取密码字段的id属性值 -->
+                {{ form.password }}<!-- 渲染密码输入框，由后端LoginForm类定义，会自动隐藏输入内容 -->
+                {% if form.password.errors %}<!-- 检查密码字段是否有错误 -->
+                    <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div><!-- 显示第一个密码错误信息 -->
                 {% endif %}
             </div>
             <div class="form-group mb-3">
-                <label for="{{ form.captcha.id_for_label }}" class="form-label">验证码</label>
+                <label for="{{ form.captcha.id_for_label }}" class="form-label">验证码</label><!-- form.captcha.id_for_label获取验证码字段的id属性值 -->
                 <div class="row">
                     <div class="col-md-7">
-                        {{ form.captcha }}
-                        {% if form.captcha.errors %}
-                            <div class="invalid-feedback d-block">{{ form.captcha.errors.0 }}</div>
+                        {{ form.captcha }}<!-- 渲染验证码输入框，由后端LoginForm类定义 -->
+                        {% if form.captcha.errors %}<!-- 检查验证码字段是否有错误 -->
+                            <div class="invalid-feedback d-block">{{ form.captcha.errors.0 }}</div><!-- 显示第一个验证码错误信息 -->
                         {% endif %}
                     </div>
                     <div class="col-md-5">
-                        {% include 'login/captcha.html' %}
+                        {% include 'login/captcha.html' %}<!-- 包含验证码图片模板，用于显示和刷新验证码 -->
                     </div>
                 </div>
             </div>
