@@ -1,0 +1,333 @@
+/**
+ * Tailwind CSS 源文件
+ * 使用 Tailwind 指令定义样式
+ * 路径：project_one/static/css/input.css
+ */
+
+/* Tailwind 基础指令 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 自定义基础样式 */
+@layer base {
+    /* 全局重置 */
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #334155;
+        background-color: #f8fafc;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+}
+
+/* 自定义组件样式 */
+@layer components {
+    /* 按钮基础样式 */
+    .btn {
+        @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm shadow-sm transition-all duration-200 cursor-pointer;
+    }
+
+    .btn-primary {
+        @apply bg-primary-600 text-white hover:bg-primary-700;
+    }
+
+    .btn-success {
+        @apply bg-success-500 text-white hover:bg-success-600;
+    }
+
+    .btn-warning {
+        @apply bg-warning-500 text-white hover:bg-warning-600;
+    }
+
+    .btn-danger {
+        @apply bg-danger-500 text-white hover:bg-danger-600;
+    }
+
+    .btn-default {
+        @apply bg-slate-100 text-slate-600 hover:bg-slate-200;
+    }
+
+    .btn-sm {
+        @apply px-3 py-1.5 text-xs;
+    }
+
+    .btn-lg {
+        @apply px-6 py-2.5 text-base;
+    }
+
+    /* 卡片样式 */
+    .card {
+        @apply bg-white border border-slate-200 rounded-xl shadow-card;
+    }
+
+    .card-header {
+        @apply px-5 py-4 border-b border-slate-200;
+    }
+
+    .card-body {
+        @apply p-5;
+    }
+
+    .card-title {
+        @apply text-lg font-medium text-slate-800;
+    }
+
+    /* 表单控件样式 */
+    .form-control {
+        @apply w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+    }
+
+    .form-select {
+        @apply w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    }
+
+    /* 表格样式 */
+    .table {
+        @apply w-full text-sm;
+    }
+
+    .table thead th {
+        @apply px-4 py-3 text-left font-medium text-slate-600 bg-slate-50 border-b border-slate-200;
+    }
+
+    .table tbody td {
+        @apply px-4 py-3 border-b border-slate-100 text-slate-600;
+    }
+
+    .table tbody tr:hover {
+        @apply bg-slate-50;
+    }
+
+    /* 标签样式 */
+    .badge {
+        @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+    }
+
+    .badge-success {
+        @apply bg-success-100 text-success-700;
+    }
+
+    .badge-warning {
+        @apply bg-warning-100 text-warning-700;
+    }
+
+    .badge-danger {
+        @apply bg-danger-100 text-danger-700;
+    }
+
+    .badge-info {
+        @apply bg-info-100 text-info-700;
+    }
+
+    /* 侧边导航样式 */
+    .sidebar {
+        @apply w-64 bg-slate-900 text-white h-screen fixed left-0 top-0 overflow-y-auto;
+    }
+
+    .sidebar-header {
+        @apply px-5 py-4 border-b border-slate-700;
+    }
+
+    .sidebar-logo {
+        @apply text-xl font-bold;
+    }
+
+    .sidebar-menu {
+        @apply p-3;
+    }
+
+    .sidebar-item {
+        @apply flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer;
+    }
+
+    .sidebar-item:hover {
+        @apply bg-slate-800;
+    }
+
+    .sidebar-item.active {
+        @apply bg-primary-600;
+    }
+
+    .sidebar-item-icon {
+        @apply w-5 h-5 mr-3;
+    }
+
+    /* 顶部导航样式 */
+    .topbar {
+        @apply bg-white border-b border-slate-200 h-14 flex items-center justify-between px-6 fixed top-0 right-0 left-64 z-40;
+    }
+
+    /* 主内容区域 */
+    .main-content {
+        @apply ml-64 pt-14 p-6 min-h-screen bg-slate-50;
+    }
+
+    /* 统计卡片 */
+    .stat-card {
+        @apply bg-white rounded-xl p-5 border border-slate-200 shadow-card hover:shadow-card-hover transition-shadow duration-300;
+    }
+
+    .stat-card-icon {
+        @apply w-12 h-12 rounded-lg flex items-center justify-center mb-4;
+    }
+
+    .stat-card-value {
+        @apply text-2xl font-bold text-slate-800 mb-1;
+    }
+
+    .stat-card-label {
+        @apply text-sm text-slate-500;
+    }
+
+    /* 操作列 */
+    .action-links {
+        @apply flex items-center gap-3 text-sm;
+    }
+
+    .action-link {
+        @apply text-primary-600 hover:text-primary-700 hover:underline;
+    }
+
+    .action-link-danger {
+        @apply text-danger-600 hover:text-danger-700 hover:underline;
+    }
+
+    /* 搜索框 */
+    .search-box {
+        @apply flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-2;
+    }
+
+    .search-input {
+        @apply bg-transparent border-none outline-none text-sm text-slate-600 placeholder-slate-400;
+    }
+
+    /* 分页样式 */
+    .pagination {
+        @apply flex items-center justify-center gap-1 mt-6;
+    }
+
+    .page-item {
+        @apply px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200;
+    }
+
+    .page-item:hover {
+        @apply bg-slate-100;
+    }
+
+    .page-item.active {
+        @apply bg-primary-600 text-white;
+    }
+
+    .page-item.disabled {
+        @apply text-slate-400 cursor-not-allowed;
+    }
+
+    /* 空状态 */
+    .empty-state {
+        @apply text-center py-12;
+    }
+
+    .empty-icon {
+        @apply w-16 h-16 mx-auto mb-4 text-slate-300;
+    }
+
+    .empty-text {
+        @apply text-slate-500;
+    }
+
+    /* 表单组 */
+    .form-group {
+        @apply mb-4;
+    }
+
+    .form-label {
+        @apply block text-sm font-medium text-slate-700 mb-2;
+    }
+
+    /* 表单错误提示 */
+    .form-error {
+        @apply mt-1 text-sm text-danger-600;
+    }
+}
+
+/* 自定义工具类 */
+@layer utilities {
+    .text-ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+/* Bootstrap兼容性处理 */
+.btn-primary:not(:disabled):not(.disabled):active {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .sidebar {
+        @apply w-56;
+    }
+
+    .topbar {
+        @apply left-56;
+    }
+
+    .main-content {
+        @apply ml-56;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        @apply w-full h-auto;
+        position: relative;
+    }
+
+    .topbar {
+        @apply left-0;
+    }
+
+    .main-content {
+        @apply ml-0;
+    }
+}

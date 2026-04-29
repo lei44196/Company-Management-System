@@ -1,77 +1,179 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业管理系统</title>
+    <!-- Tailwind CSS CDN - 预编译版本，确保样式正确加载 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind 主题配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        success: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        warning: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        },
+                        danger: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        },
+                        info: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                    },
+                    boxShadow: {
+                        card: '0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03)',
+                        'card-hover': '0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.04)',
+                    },
+                },
+            }
+        }
+    </script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block css %}
-
     {% endblock %}
 </head>
 <body>
-
-<div class="navbar navbar-default">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">管理系统</a>
+    <!-- 侧边导航栏 -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">企业管理系统</div>
         </div>
+        <nav class="sidebar-menu">
+            {% if request.unicom_role == 1 %}
+                <!-- 员工角色菜单 -->
+                <a href="/depart/" class="sidebar-item {% if request.path == '/depart/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">📋</span>
+                    <span>部门列表</span>
+                </a>
+                <a href="/user/" class="sidebar-item {% if request.path == '/user/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">👥</span>
+                    <span>员工列表</span>
+                </a>
+                <a href="/asset/" class="sidebar-item {% if request.path == '/asset/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">📦</span>
+                    <span>资产页面</span>
+                </a>
+                <a href="/task/" class="sidebar-item {% if request.path == '/task/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">✅</span>
+                    <span>任务安排</span>
+                </a>
+                <a href="/perform/" class="sidebar-item {% if request.path == '/perform/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">📊</span>
+                    <span>绩效展示</span>
+                </a>
+            {% elif request.unicom_role == 2 or request.unicom_role == 3 %}
+                <!-- 领导和管理员角色菜单 -->
+                <a href="/" class="sidebar-item {% if request.path == '/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">🏠</span>
+                    <span>首页</span>
+                </a>
+                <a href="/depart/" class="sidebar-item {% if request.path == '/depart/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">📋</span>
+                    <span>部门列表</span>
+                </a>
+                <a href="/user/" class="sidebar-item {% if request.path == '/user/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">👥</span>
+                    <span>员工列表</span>
+                </a>
+                <a href="/asset/" class="sidebar-item {% if request.path == '/asset/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">📦</span>
+                    <span>资产管理</span>
+                </a>
+                <a href="/admin_role/admin_list/" class="sidebar-item {% if '/admin_role/' in request.path %}active{% endif %}">
+                    <span class="sidebar-item-icon">🔧</span>
+                    <span>员工管理</span>
+                </a>
+                <a href="/task/" class="sidebar-item {% if request.path == '/task/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">✅</span>
+                    <span>任务安排</span>
+                </a>
+                <a href="/perform/" class="sidebar-item {% if request.path == '/perform/' %}active{% endif %}">
+                    <span class="sidebar-item-icon">📊</span>
+                    <span>绩效管理</span>
+                </a>
+            {% endif %}
+        </nav>
+    </aside>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                {% if request.unicom_role == 1 %}
-                    <li class="active"><a href="/depart/">部门列表</a></li>
-                    <li class="active"><a href="/user/">员工列表</a></li>
-                    <li class="active"><a href="/asset/">资产页面</a></li>
-                    <li class="active"><a href="/task/">任务安排</a></li>
-                    <li class="active"><a href="/perform/">绩效展示</a></li>
+    <!-- 顶部导航栏 -->
+    <header class="topbar">
+        <div>
+            <h1 class="text-lg font-semibold text-slate-800">{% block page_title %}{% endblock %}</h1>
+        </div>
+        <div class="topbar-user">
+            <span class="text-sm text-slate-600">{{ request.session.info.username }}</span>
+            <div class="topbar-avatar">{{ request.session.info.username|first }}</div>
+            <a href="/logout/" class="text-sm text-slate-500 hover:text-slate-700 ml-2">退出登录</a>
+        </div>
+    </header>
 
-                {% elif request.unicom_role == 2 %}
-                    <li class="active"><a href="/depart/">部门列表</a></li>
-                    <li class="active"><a href="/user/">员工列表</a></li>
-                    <li class="active"><a href="/asset/">资产页面</a></li>
-                    <li class="active"><a href="/admin_role/admin_list/">员工管理</a></li>
-                    <li class="active"><a href="/task/">任务安排</a></li>
-                    <li class="active"><a href="/perform/">绩效管理</a></li>
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
 
-                {% elif request.unicom_role == 3 %}
-                    <li class="active"><a href="/depart/">部门列表</a></li>
-                    <li class="active"><a href="/user/">员工列表</a></li>
-                    <li class="active"><a href="/asset/">资产页面</a></li>
-                    <li class="active"><a href="/admin_role/admin_list/">员工管理</a></li>
-                    <li class="active"><a href="/task/">任务安排</a></li>
-                    <li class="active"><a href="/perform/">绩效管理</a></li>
-                {% endif %}
-
-
-
-            </ul>
-
-            <ul class="nav navbar-nav navbar-right">
-
-                <li class="active"><a href="">{{ request.session.info.username }}</a></li>
-                <li class="active"><a href="/logout/">登出</a></li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-</div>
-
-{% block content %}
-
-{% endblock %}
-<script src="{% static 'js/jquery.js' %}"></script>
-<script src="{% static 'js/bootstrap.js' %}"></script>
-{% block js %}
-
-{% endblock %}
+    <!-- JavaScript -->
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    {% block js %}
+    {% endblock %}
 </body>
 </html>

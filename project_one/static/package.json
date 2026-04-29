@@ -1,0 +1,24 @@
+{
+  "name": "enterprise-management-system",
+  "version": "1.0.0",
+  "description": "企业管理系统前端资源",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./project_one/static/css/input.css -o ./project_one/static/css/style.css --watch",
+    "build": "npx tailwindcss -i ./project_one/static/css/input.css -o ./project_one/static/css/style.css --minify",
+    "build:watch": "npx tailwindcss -i ./project_one/static/css/input.css -o ./project_one/static/css/style.css --watch --poll"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5"
+  },
+  "keywords": [
+    "tailwind",
+    "css",
+    "postcss",
+    "enterprise",
+    "management"
+  ],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,21 +1,163 @@
-{% extends  "index/web_mdl.html"%}
+{% extends "index/web_mdl.html" %}
 
+{% block page_title %}首页{% endblock %}
 
-
-{% block css %}
-    <style>
-    #div-i1{
-        width: 200px;
-        height: 200px;
-        background-color: orange;
-        text-align: center;
-    }
-    </style>
-{% endblock %}
 {% block content %}
-    <div id="div-i1">
-    <span>
-        我是首页的内容
-    </span>
+    <!-- 欢迎信息 -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-slate-800">欢迎回来，{{ request.session.info.username }}</h1>
+        <p class="text-slate-500 mt-1">这是您的管理控制台</p>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- 部门数量 -->
+        <div class="stat-card">
+            <div class="stat-card-icon bg-primary-100">
+                <span class="text-2xl">📋</span>
+            </div>
+            <div class="stat-card-value">{{ stat_data.depart_count }}</div>
+            <div class="stat-card-label">部门总数</div>
+        </div>
+
+        <!-- 员工数量 -->
+        <div class="stat-card">
+            <div class="stat-card-icon bg-success-100">
+                <span class="text-2xl">👥</span>
+            </div>
+            <div class="stat-card-value">{{ stat_data.user_count }}</div>
+            <div class="stat-card-label">员工总数</div>
+        </div>
+
+        <!-- 资产数量 -->
+        <div class="stat-card">
+            <div class="stat-card-icon bg-info-100">
+                <span class="text-2xl">📦</span>
+            </div>
+            <div class="stat-card-value">{{ stat_data.asset_count }}</div>
+            <div class="stat-card-label">资产总数</div>
+        </div>
+
+        <!-- 待办任务 -->
+        <div class="stat-card">
+            <div class="stat-card-icon bg-warning-100">
+                <span class="text-2xl">✅</span>
+            </div>
+            <div class="stat-card-value">{{ stat_data.task_count }}</div>
+            <div class="stat-card-label">待办任务</div>
+        </div>
+    </div>
+
+    <!-- 快捷入口 -->
+    <div class="card mb-8">
+        <div class="card-header">
+            <h3 class="card-title">快捷操作</h3>
+        </div>
+        <div class="card-body">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <a href="/depart/add/" class="flex flex-col items-center p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors duration-200">
+                    <span class="text-3xl mb-2">➕</span>
+                    <span class="text-sm text-slate-600">添加部门</span>
+                </a>
+                <a href="/user/add/" class="flex flex-col items-center p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors duration-200">
+                    <span class="text-3xl mb-2">👤</span>
+                    <span class="text-sm text-slate-600">添加员工</span>
+                </a>
+                <a href="/asset/add/" class="flex flex-col items-center p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors duration-200">
+                    <span class="text-3xl mb-2">📥</span>
+                    <span class="text-sm text-slate-600">添加资产</span>
+                </a>
+                <a href="/task/add/" class="flex flex-col items-center p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors duration-200">
+                    <span class="text-3xl mb-2">📝</span>
+                    <span class="text-sm text-slate-600">新建任务</span>
+                </a>
+                <a href="/perform/add/" class="flex flex-col items-center p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors duration-200">
+                    <span class="text-3xl mb-2">📊</span>
+                    <span class="text-sm text-slate-600">添加绩效</span>
+                </a>
+                <a href="/admin_role/admin_add/" class="flex flex-col items-center p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors duration-200">
+                    <span class="text-3xl mb-2">🔧</span>
+                    <span class="text-sm text-slate-600">添加账号</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 最近动态 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- 最近任务 -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">最近任务</h3>
+                <a href="/task/" class="text-sm text-primary-600 hover:text-primary-700 ml-auto">查看全部</a>
+            </div>
+            <div class="card-body">
+                <div class="space-y-4">
+                    {% for task in recent_tasks %}
+                        <div class="flex items-start justify-between p-3 bg-slate-50 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-slate-800">{{ task.title }}</h4>
+                                <p class="text-sm text-slate-500 mt-1">{{ task.assignee.username }} · {{ task.deadline|date:"Y-m-d" }}</p>
+                            </div>
+                            <span class="badge {% if task.status == 0 %}badge-warning{% elif task.status == 1 %}badge-info{% else %}badge-success{% endif %}">
+                                {% if task.status == 0 %}待处理{% elif task.status == 1 %}进行中{% else %}已完成{% endif %}
+                            </span>
+                        </div>
+                    {% empty %}
+                        <div class="empty-state">
+                            <div class="empty-icon">✅</div>
+                            <div class="empty-text">暂无任务</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 最近绩效 -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">最近绩效</h3>
+                <a href="/perform/" class="text-sm text-primary-600 hover:text-primary-700 ml-auto">查看全部</a>
+            </div>
+            <div class="card-body">
+                <div class="space-y-4">
+                    {% for perform in recent_performs %}
+                        <div class="flex items-start justify-between p-3 bg-slate-50 rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-slate-800">{{ perform.title }}</h4>
+                                <p class="text-sm text-slate-500 mt-1">{{ perform.name }} · ¥{{ perform.price }}</p>
+                            </div>
+                            <span class="text-sm text-success-600 font-medium">+¥{{ perform.price }}</span>
+                        </div>
+                    {% empty %}
+                        <div class="empty-state">
+                            <div class="empty-icon">📊</div>
+                            <div class="empty-text">暂无绩效</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 部门分布图表 -->
+    <div class="card mt-6">
+        <div class="card-header">
+            <h3 class="card-title">部门人员分布</h3>
+        </div>
+        <div class="card-body">
+            <div class="flex flex-wrap gap-4">
+                {% for depart in depart_stats %}
+                    <div class="flex items-center gap-3">
+                        <div class="w-3 h-3 rounded-full" style="background-color: {{ depart.color }};"></div>
+                        <span class="text-sm text-slate-600">{{ depart.name }}:</span>
+                        <span class="text-sm font-medium text-slate-800">{{ depart.count }}人</span>
+                        <div class="w-24 bg-slate-200 rounded-full h-2">
+                            <div class="h-2 rounded-full" style="width: {{ depart.percentage }}%; background-color: {{ depart.color }};"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}

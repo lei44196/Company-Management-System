@@ -1,114 +1,104 @@
 {% extends "index/web_mdl.html" %}
 
+{% block page_title %}任务安排{% endblock %}
+
 {% block content %}
-    <div class="container">
-        <!-- 添加任务按钮（仅领导和管理员可见） -->
-        {% if request.unicom_role == 2 or request.unicom_role == 3 %}
-        <a href="/task/add/" class="btn btn-success">添加任务</a>
+    <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-slate-800">任务管理</h2>
+        {% if request.unicom_role in '2,3' %}
+            <a href="/task/add/" class="btn btn-primary">
+                <span class="mr-1">+</span> 新建任务
+            </a>
         {% endif %}
-        
-        <!-- 搜索表单 -->
-        <form method="get">
-            <div class="form-group" style="float: right">
-                <input type="text" class="form-control" name="search" placeholder="搜索任务标题或描述" value="{{ search_value }}">
-                <button class="btn btn-default" type="submit">查询</button>
-            </div>
-        </form>
-        
-        <!-- 任务列表 -->
-        <div class="panel panel-danger">
-            <div class="panel-heading">
-                <h3 class="panel-title">任务管理</h3>
-            </div>
-            <div class="panel-body">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>任务标题</th>
-                        <th>状态</th>
-                        <th>接收人</th>
-                        <th>截止日期</th>
-                        <th>创建时间</th>
-                        <th>描述</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% if data_list %}
-                        {% for task in data_list %}
-                            <tr>
-                                <td>{{ task.title }}</td>
-                                <td>
-                                    {% if task.status == 0 %}
-                                        <span class="label label-warning">待办</span>
-                                    {% elif task.status == 1 %}
-                                        <span class="label label-info">进行中</span>
-                                    {% else %}
-                                        <span class="label label-success">已完成</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ task.assignee.username }}</td>
-                                <td>{{ task.deadline }}</td>
-                                <td>{{ task.create_time|date:"Y-m-d" }}</td>
-                                <td>{{ task.description|truncatechars:50 }}</td>
-                                <td style="color: green">
-                                    {% if request.unicom_role == 2 or request.unicom_role == 3 %}
-                                    <a href="/task/{{ task.id }}/modify/">修改</a>
-                                    <a href="/task/{{ task.id }}/delete/">删除</a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="7" class="text-center">暂无任务</td>
-                        </tr>
-                    {% endif %}
-                    </tbody>
-                </table>
+    </div>
+
+    <!-- 搜索框 -->
+    <div class="card mb-6">
+        <div class="card-body">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" class="search-input" placeholder="搜索任务标题或描述..." id="searchInput">
             </div>
         </div>
-        
-        <!-- 分页 -->
-        {% if page_html %}
-            <ul class="pagination">
-                {{ page_html|safe }}
-            </ul>
-        {% endif %}
-        
-        <!-- ArcGIS地图 -->
-        <div id="map" style="height: 400px; width: 100%; margin-top: 20px; border-radius: 5px;"></div>
     </div>
-    
-    <!-- 引入ArcGIS JavaScript API -->
-    <script src="https://js.arcgis.com/4.27/" defer></script>
-    <script>
-        require([
-            "esri/Map",
-            "esri/views/MapView",
-            "esri/layers/FeatureLayer"
-        ], function(Map, MapView, FeatureLayer) {
-            // 创建地图
-            const map = new Map({
-                basemap: "streets-navigation-vector"
-            });
-            
-            // 创建地图视图
-            const view = new MapView({
-                container: "map",
-                map: map,
-                center: [116.3974, 39.9093], // 北京坐标
-                zoom: 12
-            });
-            
-            // 添加任务点图层（示例）
-            // 实际应用中，这里可以根据任务的地理位置信息添加点
-            /*
-            const taskLayer = new FeatureLayer({
-                url: "https://services.arcgis.com/your-service-url/FeatureServer/0"
-            });
-            map.add(taskLayer);
-            */
-        });
-    </script>
+
+    <!-- 任务列表卡片 -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">任务列表</h3>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>任务标题</th>
+                        <th>描述</th>
+                        <th>负责人</th>
+                        <th>截止日期</th>
+                        <th>状态</th>
+                        {% if request.unicom_role in '2,3' %}
+                            <th>操作</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in data_list %}
+                        <tr>
+                            <td>{{ task.id }}</td>
+                            <td>{{ task.title }}</td>
+                            <td class="line-clamp-2">{{ task.description }}</td>
+                            <td>{{ task.assignee.username }}</td>
+                            <td>{{ task.deadline|date:"Y-m-d" }}</td>
+                            <td>
+                                {% if task.status == 0 %}
+                                    <span class="badge badge-warning">待处理</span>
+                                {% elif task.status == 1 %}
+                                    <span class="badge badge-info">进行中</span>
+                                {% else %}
+                                    <span class="badge badge-success">已完成</span>
+                                {% endif %}
+                            </td>
+                            {% if request.unicom_role in '2,3' %}
+                                <td>
+                                    <div class="action-links">
+                                        <a href="/task/{{ task.id }}/modify/" class="action-link">修改</a>
+                                        <a href="/task/{{ task.id }}/delete/" class="action-link-danger">删除</a>
+                                    </div>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-icon">✅</div>
+                                <div class="empty-text">暂无任务数据</div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            {% if page_html %}
+                <div class="pagination">
+                    {{ page_html|safe }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script>
+// 搜索功能
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchText = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchText) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}

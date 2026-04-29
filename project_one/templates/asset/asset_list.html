@@ -1,65 +1,100 @@
 {% extends "index/web_mdl.html" %}
 
+{% block page_title %}资产管理{% endblock %}
+
 {% block content %}
+    <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-slate-800">资产管理</h2>
+        <div class="btn-group">
+            <a href="/asset/add/" class="btn btn-primary">
+                <span class="mr-1">+</span> 添加资产
+            </a>
+            <a href="/asset/daoru/" class="btn btn-default">
+                <span class="mr-1">📥</span> 导入资产
+            </a>
+        </div>
+    </div>
 
-    <div class="container">
-        <a href="/asset/add/" class="btn btn-success">添加资产</a>
-        <a href="/asset/daoru/" class="btn btn-warning">导入资产</a>
-
-        <form method="get">
-            <div class="form-group" style="float: right">
-                <input type="text" class="form-control" name="search" placeholder="Search"
-                       value="{{ search_value }}">
-                <button class="btn btn-default" type="submit">查询</button>
+    <!-- 搜索框 -->
+    <div class="card mb-6">
+        <div class="card-body">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" class="search-input" placeholder="搜索手机号..." id="searchInput">
             </div>
-        </form>
+        </div>
+    </div>
 
-        <div class="panel panel-danger">
-            <div class="panel-heading">
-                <h3 class="panel-title">资产表</h3>
-            </div>
-            <div class="panel-body">
-                <table class="table">
-                    <thead>
+    <!-- 资产列表卡片 -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">资产列表</h3>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
                     <tr>
-                        <th>Id</th>
-                        <th>电话号码</th>
-                        <th>使用状态</th>
+                        <th>ID</th>
+                        <th>手机号</th>
+                        <th>状态</th>
                         <th>购买时间</th>
                         <th>价格</th>
-                        <th>使用人</th>
+                        <th>所属员工</th>
                         <th>操作</th>
                     </tr>
-                    </thead>
-                    <tbody>
+                </thead>
+                <tbody>
                     {% for data in data_list %}
                         <tr>
-                            <th scope="row">{{ data.id }}</th>
+                            <td>{{ data.id }}</td>
                             <td>{{ data.mobile }}</td>
-                            <td>{{ data.get_status_display }}</td>
+                            <td>
+                                {% if data.status == 1 %}
+                                    <span class="badge badge-success">在用</span>
+                                {% else %}
+                                    <span class="badge badge-warning">闲置</span>
+                                {% endif %}
+                            </td>
                             <td>{{ data.times }}</td>
-                            <td>{{ data.price }}</td>
+                            <td>¥{{ data.price }}</td>
                             <td>{{ data.user.name|default:"未分配" }}</td>
-                            <td style="color: green">
-                                <a href="/asset/{{ data.id }}/del">删除</a>
-                                <a href="/asset/{{ data.id }}/modify">修改</a>
+                            <td>
+                                <div class="action-links">
+                                    <a href="/asset/{{ data.id }}/modify/" class="action-link">修改</a>
+                                </div>
                             </td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="7" class="text-center">暂无数据</td>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-icon">📦</div>
+                                <div class="empty-text">暂无资产数据</div>
+                            </td>
                         </tr>
                     {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            {% if page_html %}
+                <div class="pagination">
+                    {{ page_html|safe }}
+                </div>
+            {% endif %}
         </div>
-
-        {% if page_html %}
-            <ul class="pagination">
-                {{ page_html|safe }}
-            </ul>
-        {% endif %}
-
     </div>
+{% endblock %}
+
+{% block js %}
+<script>
+// 搜索功能
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchText = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchText) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}

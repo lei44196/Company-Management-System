@@ -1,58 +1,94 @@
 {% extends "index/web_mdl.html" %}
 
+{% block page_title %}员工管理{% endblock %}
+
 {% block content %}
+    <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-slate-800">员工账号管理</h2>
+        <a href="/admin_role/admin_add/" class="btn btn-primary">
+            <span class="mr-1">+</span> 添加账号
+        </a>
+    </div>
 
-    <div class="container">
-        <a href="/admin_role/admin_add/" class="btn btn-success">添加账号</a>
-
-
-        <div class="panel panel-danger">
-            <div class="panel-heading">
-                <h3 class="panel-title">用户表</h3>
+    <!-- 搜索框 -->
+    <div class="card mb-6">
+        <div class="card-body">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" class="search-input" placeholder="搜索手机号..." id="searchInput">
             </div>
-            <div class="panel-body">
-                <table class="table">
-                    <thead>
+        </div>
+    </div>
+
+    <!-- 管理员列表卡片 -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">账号列表</h3>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
                     <tr>
-                        <th>Id</th>
+                        <th>ID</th>
                         <th>用户名</th>
                         <th>密码</th>
                         <th>身份</th>
-                        <th>重置密码</th>
-
                         <th>操作</th>
                     </tr>
-                    </thead>
-                    <tbody>
+                </thead>
+                <tbody>
                     {% for data in data_list %}
                         <tr>
-                            <th scope="row">{{ data.id }}</th>
+                            <td>{{ data.id }}</td>
                             <td>{{ data.username }}</td>
                             <td>********</td>
-                            <td>{{ data.get_role_display}}</td>
-                            <td><a href="/admin_role/{{ data.id }}/reset/">重置密码</a></td>
-
-
-                            <td style="color: green">
-                                <a href="">删除</a>
-                                <a href="/admin_role/{{ data.id }}/admin_modify/">修改</a>
+                            <td>
+                                {% if data.role == 1 %}
+                                    <span class="badge badge-info">员工</span>
+                                {% elif data.role == 2 %}
+                                    <span class="badge badge-warning">领导</span>
+                                {% else %}
+                                    <span class="badge badge-danger">管理员</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="action-links">
+                                    <a href="/admin_role/{{ data.id }}/reset/" class="text-success hover:text-success-700 hover:underline">重置密码</a>
+                                    <a href="/admin_role/{{ data.id }}/admin_modify/" class="action-link">修改</a>
+                                </div>
                             </td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="7" class="text-center">暂无数据</td>
+                            <td colspan="5" class="empty-state">
+                                <div class="empty-icon">🔧</div>
+                                <div class="empty-text">暂无账号数据</div>
+                            </td>
                         </tr>
                     {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            {% if page_html %}
+                <div class="pagination">
+                    {{ page_html|safe }}
+                </div>
+            {% endif %}
         </div>
-
-        {% if page_html %}
-            <ul class="pagination">
-                {{ page_html|safe }}
-            </ul>
-        {% endif %}
-
     </div>
+{% endblock %}
+
+{% block js %}
+<script>
+// 搜索功能
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchText = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchText) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}

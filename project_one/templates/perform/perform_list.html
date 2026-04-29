@@ -1,66 +1,106 @@
 {% extends "index/web_mdl.html" %}
 
-{% block content %}
-    <div class="container">
-        <a href="/perform/add/" class="btn btn-success">添加绩效</a>
-        <form method="get">
-            <div class="form-group" style="float: right">
-                <input type="text" class="form-control" name="search" placeholder="Search"
-                       value="{{ search_value }}">
-                <button class="btn btn-default" type="submit">查询</button>
-            </div>
-        </form>
+{% block page_title %}绩效管理{% endblock %}
 
-        <div class="panel panel-danger">
-            <div class="panel-heading">
-                <h3 class="panel-title">绩效表</h3>
+{% block content %}
+    <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-slate-800">绩效管理</h2>
+        {% if request.unicom_role in '2,3' %}
+            <a href="/perform/add/" class="btn btn-primary">
+                <span class="mr-1">+</span> 添加绩效
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- 搜索框 -->
+    <div class="card mb-6">
+        <div class="card-body">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" class="search-input" placeholder="搜索订单号、标题或姓名..." id="searchInput">
             </div>
-            <div class="panel-body">
-                <table class="table">
-                    <thead>
+        </div>
+    </div>
+
+    <!-- 绩效列表卡片 -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">绩效列表</h3>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
                     <tr>
+                        <th>ID</th>
                         <th>订单号</th>
                         <th>来源</th>
-                        <th>客户姓名</th>
+                        <th>标题</th>
                         <th>成交日期</th>
-                        <th>成交金额</th>
-                        <th>销售人员</th>
-                        <th>业绩图片</th>
-                        <th>操作</th>
+                        <th>金额</th>
+                        <th>员工姓名</th>
+                        <th>图片</th>
+                        {% if request.unicom_role in '2,3' %}
+                            <th>操作</th>
+                        {% endif %}
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for data in data_list %}
+                </thead>
+                <tbody>
+                    {% for perform in data_list %}
                         <tr>
-                            <td>{{ data.oid }}</td>
-                            <td>{{ data.source }}</td>
-                            <td>{{ data.title }}</td>
-                            <td>{{ data.times }}</td>
-                            <td>{{ data.price }}</td>
-                            <td>{{ data.name }}</td>
-                            <td><a href="{{ data.image.url }}" target="_blank">{{ data.image.name }}</a></td>
-                            <td style="color: green">
-                                {% if request.unicom_role == 2 or request.unicom_role == 3 %}
-                                <a href="/perform/{{ data.id }}/modify/">修改</a>
-                                <a href="/perform/{{ data.id }}/delete/">删除</a>
+                            <td>{{ perform.id }}</td>
+                            <td>{{ perform.oid }}</td>
+                            <td>{{ perform.source }}</td>
+                            <td>{{ perform.title }}</td>
+                            <td>{{ perform.times|date:"Y-m-d" }}</td>
+                            <td>¥{{ perform.price }}</td>
+                            <td>{{ perform.name }}</td>
+                            <td>
+                                {% if perform.image %}
+                                    <img src="{{ perform.image.url }}" alt="绩效图片" class="w-10 h-10 rounded object-cover">
+                                {% else %}
+                                    <span class="text-slate-400">无图片</span>
                                 {% endif %}
                             </td>
+                            {% if request.unicom_role in '2,3' %}
+                                <td>
+                                    <div class="action-links">
+                                        <a href="/perform/{{ perform.id }}/modify/" class="action-link">修改</a>
+                                        <a href="/perform/{{ perform.id }}/delete/" class="action-link-danger">删除</a>
+                                    </div>
+                                </td>
+                            {% endif %}
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="8" class="text-center">暂无数据</td>
+                            <td colspan="9" class="empty-state">
+                                <div class="empty-icon">📊</div>
+                                <div class="empty-text">暂无绩效数据</div>
+                            </td>
                         </tr>
                     {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            {% if page_html %}
+                <div class="pagination">
+                    {{ page_html|safe }}
+                </div>
+            {% endif %}
         </div>
-
-        {% if page_html %}
-            <ul class="pagination">
-                {{ page_html|safe }}
-            </ul>
-        {% endif %}
-
     </div>
+{% endblock %}
+
+{% block js %}
+<script>
+// 搜索功能
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchText = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchText) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}

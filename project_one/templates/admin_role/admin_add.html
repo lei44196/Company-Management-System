@@ -1,40 +1,31 @@
 {% extends "index/web_mdl.html" %}
 
-{% load static %}
-{% block css %}
-    <link rel="stylesheet" href="{% static 'css/layui.css' %}">
-{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1>{{ title }}</h1>
-        <form method="post" novalidate>
-            {% csrf_token %}
-            {% for filed in form %}
-                <label for="exampleInputEmail1">{{ filed.label }}</label>
-
-                {{ filed }}
-                <span style="color: red">{{ filed.errors }}</span>
-
-            {% endfor %}
-            <button type="submit" class="btn-success">提交</button>
-        </form>
-
-
+    <div class="max-w-lg mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">{{ title }}</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" class="space-y-4">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="form-error">{{ field.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="flex justify-end gap-3">
+                        <a href="/admin_role/admin_list/" class="btn btn-default">取消</a>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-{% block js %}
-    <script src="{% static 'js/layui.js' %}"></script>
-    <script>
-        layui.use(function () {
-            var laydate = layui.laydate;
-            // 渲染
-            laydate.render({
-                elem: '#id_times'
-            });
-        });
-    </script>
-{% endblock %}
-
-
 {% endblock %}

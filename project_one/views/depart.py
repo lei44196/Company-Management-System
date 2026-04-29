@@ -7,8 +7,47 @@ from project_one.utils.redis_cache import cache_invalidated
 
 
 def index(request):
-    """首页视图"""
-    return render(request, 'index/index.html')
+    """
+    首页视图
+    
+    提供统计数据、最近任务、最近绩效和部门分布信息
+    """
+    # 统计数据
+    stat_data = {
+        'depart_count': models.Department.objects.count(),
+        'user_count': models.Userinfo.objects.count(),
+        'asset_count': models.Assets.objects.count(),
+        'task_count': models.Task.objects.filter(status__lt=2).count(),
+    }
+    
+    # 最近任务（取最近5条）
+    recent_tasks = models.Task.objects.order_by('-id')[:5]
+    
+    # 最近绩效（取最近5条）
+    recent_performs = models.Perform.objects.order_by('-id')[:5]
+    
+    # 部门人员分布统计
+    depart_stats = []
+    departments = models.Department.objects.all()
+    total_users = models.Userinfo.objects.count()
+    colors = ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6']
+    
+    for i, depart in enumerate(departments):
+        user_count = models.Userinfo.objects.filter(depart_id=depart.id).count()
+        percentage = round((user_count / total_users) * 100) if total_users > 0 else 0
+        depart_stats.append({
+            'name': depart.title,
+            'count': user_count,
+            'percentage': percentage,
+            'color': colors[i % len(colors)]
+        })
+    
+    return render(request, 'index/index.html', {
+        'stat_data': stat_data,
+        'recent_tasks': recent_tasks,
+        'recent_performs': recent_performs,
+        'depart_stats': depart_stats,
+    })
 
 
 def depart_list(request):

@@ -1,68 +1,103 @@
 {% extends "index/web_mdl.html" %}
-\
+
+{% block page_title %}员工列表{% endblock %}
+
 {% block content %}
-	<div class="container">
-    <a href="/user/add/" class="btn btn-success">添加员工</a>
-    <a href="/user/add/modelform/" class="btn btn-warning">添加员工2</a>
-    <form method="get">
-        <div class="form-group" style="float: right">
-            <input type="text" class="form-control" name="search" placeholder="Search"
-                   value="{{ search_value }}">
-            <button class="btn btn-default" type="submit">查询</button>
+    <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-slate-800">员工管理</h2>
+        <div class="btn-group">
+            <a href="/user/add/" class="btn btn-default">
+                <span class="mr-1">+</span> 添加员工
+            </a>
+            <a href="/user/add/modelform/" class="btn btn-primary">
+                <span class="mr-1">📝</span> 高级添加
+            </a>
         </div>
-    </form>
-        <div class="panel panel-danger">
-            <div class="panel-heading">
-                <h3 class="panel-title">员工表</h3>
+    </div>
+
+    <!-- 搜索框 -->
+    <div class="card mb-6">
+        <div class="card-body">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" class="search-input" placeholder="搜索员工姓名..." id="searchInput">
             </div>
-            <div class="panel-body">
-                <table class="table">
+        </div>
+    </div>
 
-                    <thead>
+    <!-- 员工列表卡片 -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">员工列表</h3>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
                     <tr>
-
+                        <th>ID</th>
                         <th>姓名</th>
                         <th>年龄</th>
                         <th>性别</th>
-                        <th>薪水</th>
-                        <th>入职时间</th>
+                        <th>薪资</th>
                         <th>部门</th>
+                        <th>入职时间</th>
                         <th>操作</th>
-
-
                     </tr>
-                    </thead>
-                    <tbody>
+                </thead>
+                <tbody>
                     {% for data in data_list %}
                         <tr>
-                            <th>{{ data.name }}</th>
+                            <td>{{ data.id }}</td>
+                            <td>{{ data.name }}</td>
                             <td>{{ data.age }}</td>
-                            <td>{{ data.get_gender_display  }}</td>
-                            <td>{{ data.salary }}</td>
-                            <td>{{ data.create_time|date:"Y-m-d" }}</td>
-                            <td>{{ data.depart.title }}</td>
-                            <td style="color: green">
-                                <a href="/user/{{ data.id }}/del/">删除</a>
-                                <a href="/user/{{ data.id }}/modify/">修改</a>
+                            <td>
+                                {% if data.gender == 1 %}
+                                    <span class="badge badge-info">男</span>
+                                {% else %}
+                                    <span class="badge badge-success">女</span>
+                                {% endif %}
                             </td>
-
+                            <td>¥{{ data.salary }}</td>
+                            <td>{{ data.depart.title }}</td>
+                            <td>{{ data.create_time|date:"Y-m-d" }}</td>
+                            <td>
+                                <div class="action-links">
+                                    <a href="/user/{{ data.id }}/modify/" class="action-link">修改</a>
+                                    <a href="/user/{{ data.id }}/del/" class="action-link-danger">删除</a>
+                                </div>
+                            </td>
                         </tr>
-
+                    {% empty %}
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <div class="empty-icon">👤</div>
+                                <div class="empty-text">暂无员工数据</div>
+                            </td>
+                        </tr>
                     {% endfor %}
+                </tbody>
+            </table>
 
-
-
-
-                    </tbody>
-                </table>
-            </div>
+            <!-- 分页 -->
+            {% if page_html %}
+                <div class="pagination">
+                    {{ page_html|safe }}
+                </div>
+            {% endif %}
         </div>
-
-        {% if page_html %}
-            <ul class="pagination">
-                {{ page_html|safe }}
-            </ul>
-        {% endif %}
-
     </div>
+{% endblock %}
+
+{% block js %}
+<script>
+// 搜索功能
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchText = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchText) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}
