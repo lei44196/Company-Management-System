@@ -125,3 +125,100 @@ STATIC_URL = 'static/'
 import os
 MEDIA_ROOT=os.path.join(BASE_DIR,"media")
 MEDIA_URL='/media/'
+
+# ==================== Redis 配置 ====================
+# 【配置说明】
+# Redis作为高性能内存数据库，用于实现：
+# 1. 查询缓存：减少高频数据库查询，提升响应速度
+# 2. Session存储：替代默认数据库Session，支持分布式部署
+
+# Redis服务器地址（生产环境建议使用内网IP）
+REDIS_HOST = '192.168.213.129'
+
+# Redis端口（默认6379）
+REDIS_PORT = 6379
+
+# Redis数据库编号（0-15），建议不同用途使用不同数据库
+# DB 0: 预留
+# DB 1: 缓存数据
+# DB 2: Session数据（由django-redis自动处理）
+REDIS_DB = 1
+
+# Redis密码（生产环境务必设置！）
+# 格式示例: REDIS_PASSWORD = 'your_secure_password'
+REDIS_PASSWORD = None
+
+# Redis最大连接数（连接池大小）
+# 根据并发量调整，建议值：50-200
+REDIS_MAX_CONNECTIONS = 50
+
+# ==================== 缓存配置 ====================
+# 缓存总开关：设为False可全局禁用缓存（用于调试或Redis故障时降级）
+REDIS_CACHE_ENABLED = True
+
+# 缓存键名前缀（用于区分不同项目的缓存，避免键冲突）
+# 建议格式：{项目名}
+REDIS_CACHE_PREFIX = 'project_one'
+
+# 默认缓存过期时间（秒），默认5分钟（300秒）
+# 根据业务需求调整：
+# - 数据更新频繁的场景：较短时间（如60秒）
+# - 数据相对稳定的场景：较长时间（如3600秒）
+REDIS_CACHE_TTL = 300
+
+# Django缓存后端配置（使用django-redis）
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',  # 使用django-redis作为缓存后端
+        'LOCATION': f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}',  # Redis连接地址
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',  # 默认客户端类
+            'DECODE_RESPONSES': True,  # 自动将字节转为字符串
+            'CONNECTION_POOL_KWARGS': {
+                'max_connections': REDIS_MAX_CONNECTIONS,  # 连接池大小
+                'retry_on_timeout': True,  # 超时后自动重试
+            },
+            'SOCKET_CONNECT_TIMEOUT': 5,  # 连接超时时间（秒）
+            'SOCKET_TIMEOUT': 5,  # 读写超时时间（秒）
+        }
+    }
+}
+
+# ==================== Session 配置 ====================
+# 【修改目的】
+# 将Django默认的数据库Session替换为Redis存储，优势：
+# - 性能提升：内存读写比数据库快100倍以上
+# - 分布式支持：多服务器共享Session，适合集群部署
+# - 自动清理：Redis自动处理过期Session
+
+# Session存储引擎：使用缓存（Redis）存储
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+# 使用的缓存别名（对应上面CACHES中的'default'）
+SESSION_CACHE_ALIAS = 'default'
+
+# Session过期时间（秒），默认24小时（86400秒）
+SESSION_COOKIE_AGE = 86400
+
+# 是否在关闭浏览器时删除Session
+# True: 关闭浏览器后Session立即失效
+# False: Session在过期时间后失效（推荐）
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
+# 是否每次请求都保存Session
+# True: 每次请求都会更新Session（适用于需要记录活跃时间的场景）
+# False: 只有Session数据改变时才保存（性能更好）
+SESSION_SAVE_EVERY_REQUEST = True
+
+# Session键名前缀（用于在Redis中区分Session数据）
+SESSION_KEY_PREFIX = 'session:'
+
+# Session Cookie安全配置
+SESSION_COOKIE_NAME = 'sessionid'  # Cookie名称
+SESSION_COOKIE_SECURE = False  # 是否仅HTTPS传输（生产环境建议设为True）
+SESSION_COOKIE_HTTPONLY = True  # 是否禁止JavaScript访问（防止XSS攻击）
+
+# Session Cookie配置
+SESSION_COOKIE_NAME = 'sessionid'
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True
